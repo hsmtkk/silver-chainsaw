@@ -3,3 +3,13 @@ resources:
   - deployment.yml
   - ingress.yml
   - service.yml
+configMapGenerator:
+  - name: silver-chainsaw-telegraf
+    files:
+      - telegraf/telegraf.config
+  - name: silver-chainsaw-relay
+    files:
+      - carbon-relay-ng/carbon-relay-ng.ini
+  - name: silver-chainsaw-carbon
+    files:
+      - go-carbon/storage-schemas.conf

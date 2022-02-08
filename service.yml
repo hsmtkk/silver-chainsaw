@@ -2,11 +2,47 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-service
+  name: silver-chainsaw-relay
 spec:
-  selector:
-    app: MyApp
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376
+    - protocol: TCP
+      port: 80
+  selector:
+    app: silver-chainsaw-relay
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: silver-chainsaw-exporter
+spec:
+  ports:
+    - protocol: TCP
+      port: 9109
+  selector:
+    app: silver-chainsaw-exporter
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: silver-chainsaw-prometheus
+spec:
+  ports:
+    - protocol: TCP
+      port: 9090
+  selector:
+    app: silver-chainsaw-prometheus
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: silver-chainsaw-carbon
+spec:
+  ports:
+    - protocol: TCP
+      port: 2004
+  selector:
+    app: silver-chainsaw-carbon
+  type: ClusterIP

@@ -2,21 +2,178 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: silver-chainsaw-telegraf
   labels:
-    app: nginx
+    app: silver-chainsaw-telegraf
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: silver-chainsaw-telegraf
   template:
     metadata:
       labels:
-        app: nginx
+        app: silver-chainsaw-telegraf
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.14.2
-        ports:
-        - containerPort: 80
+        - name: telegraf
+          commands:
+            - telegraf
+            - --config
+            - /usr/local/etc/telegraf.config
+          image: telegraf:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: config
+              mountPath: /usr/local/etc
+      volumes:
+        - name: config
+          configMap:
+            name: silver-chainsaw-telegraf
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silver-chainsaw-relay
+  labels:
+    app: silver-chainsaw-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: silver-chainsaw-relay
+  template:
+    metadata:
+      labels:
+        app: silver-chainsaw-relay
+    spec:
+      containers:
+        - name: carbon-relay-ng
+          image: grafana/carbon-relay-ng:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            tcpSocket:
+              port: 2003
+          readinessProbe:
+            tcpSocket:
+              port: 2003
+          startupProbe:
+            tcpSocket:
+              port: 2003
+          volumeMounts:
+            - name: config
+              mountPath: /conf
+      volumes:
+        - name: config
+          configMap:
+            name: silver-chainsaw-relay
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silver-chainsaw-exporter
+  labels:
+    app: silver-chainsaw-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: silver-chainsaw-exporter
+  template:
+    metadata:
+      labels:
+        app: silver-chainsaw-exporter
+    spec:
+      containers:
+        - name: graphite-exporter
+          image: prom/graphite-exporter:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9108
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9108
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9108
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silver-chainsaw-prometheus
+  labels:
+    app: silver-chainsaw-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: silver-chainsaw-prometheus
+  template:
+    metadata:
+      labels:
+        app: silver-chainsaw-prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9090
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+      volumes:
+        - name: config
+          configMap:
+            name: silver-chainsaw-prometheus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silver-chainsaw-carbon
+  labels:
+    app: silver-chainsaw-carbon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: silver-chainsaw-carbon
+  template:
+    metadata:
+      labels:
+        app: silver-chainsaw-carbon
+    spec:
+      containers:
+        - name: go-carbon
+          image: hsmtkk/silver-chainsaw:go-carbon
+          imagePullPolicy: Always
+          livenessProbe:
+            tcpSocket:
+              port: 2004
+          readinessProbe:
+            tcpSocket:
+              port: 2004
+          startupProbe:
+            tcpSocket:
+              port: 2004
+          volumeMounts:
+            - name: config
+              mountPath: /etc/go-carbon
+      volumes:
+        - name: config
+          configMap:
+            name: silver-chainsaw-carbon
