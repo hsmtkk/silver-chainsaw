@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  collectd:
+    image: hsmtkk/silver-chainsaw:collectd
+    volumes:
+      - ./collectd/collectd.conf:/etc/collectd/collectd.conf:ro
+  carbon-relay-ng:
+    image: grafana/carbon-relay-ng:latest
+    volumes:
+      - ./carbon-relay-ng/carbon-relay-ng.ini:/conf/carbon-relay-ng.ini:ro
+  graphite-exporter:
+    image: prom/graphite-exporter:latest
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.conf:/etc/prometheus/prometheus.conf:ro
+  go-carbon:
+    image: hsmtkk/silver-chainsaw:go-carbon
+    volumes:
+      - ./go-carbon/storage-schemas.conf:/etc/go-carbon/storage-schemas.conf:ro
