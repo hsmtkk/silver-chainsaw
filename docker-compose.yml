@@ -1,9 +1,17 @@
 version: "3.8"
 services:
-  collectd:
-    image: hsmtkk/silver-chainsaw:collectd
+  # collectd:
+  #   image: hsmtkk/silver-chainsaw:collectd
+  #   volumes:
+  #     - ./collectd/collectd.conf:/etc/collectd/collectd.conf:ro
+  telegraf:
+    image: telegraf:latest
+    command:
+      - telegraf
+      - --config
+      - /usr/local/etc/telegraf.config
     volumes:
-      - ./collectd/collectd.conf:/etc/collectd/collectd.conf:ro
+      - ./telegraf/telegraf.config:/usr/local/etc/telegraf.config:ro
   carbon-relay-ng:
     image: grafana/carbon-relay-ng:latest
     volumes:
