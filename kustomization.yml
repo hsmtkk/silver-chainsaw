@@ -13,3 +13,6 @@ configMapGenerator:
   - name: silver-chainsaw-carbon
     files:
       - go-carbon/storage-schemas.conf
+  - name: silver-chainsaw-prometheus
+    files:
+      - prometheus/prometheus.yml
