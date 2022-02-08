@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: telegraf
-          commands:
+          command:
             - telegraf
             - --config
             - /usr/local/etc/telegraf.config
