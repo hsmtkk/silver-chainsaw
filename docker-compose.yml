@@ -15,7 +15,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.conf:/etc/prometheus/prometheus.conf:ro
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
   go-carbon:
     image: hsmtkk/silver-chainsaw:go-carbon
     volumes:
