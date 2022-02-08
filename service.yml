@@ -17,7 +17,11 @@ metadata:
   name: silver-chainsaw-exporter
 spec:
   ports:
-    - protocol: TCP
+    - name: prometheus
+      protocol: TCP
+      port: 9108
+    - name: garphite
+      protocol: TCP
       port: 9109
   selector:
     app: silver-chainsaw-exporter
