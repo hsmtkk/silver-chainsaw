@@ -1,9 +1,5 @@
 version: "3.8"
 services:
-  # collectd:
-  #   image: hsmtkk/silver-chainsaw:collectd
-  #   volumes:
-  #     - ./collectd/collectd.conf:/etc/collectd/collectd.conf:ro
   telegraf:
     image: telegraf:latest
     command:
